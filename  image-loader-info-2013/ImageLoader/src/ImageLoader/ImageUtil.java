@@ -312,37 +312,5 @@ public class ImageUtil {
 		
 		return dest;
 	}
-	public static BufferedImage contrastStretch(BufferedImage input) {
-		BufferedImage dest = null;
-		
-		int max = Integer.MIN_VALUE;
-		int min = Integer.MAX_VALUE;
-		int pix;
-		
-		// find max and min
-		for(int i=0;i<input.getWidth();i++)
-			for(int j=0;j<input.getHeight();j++){
-				pix = input.getRaster().getSample(i, j, 0);
-				if(pix > max)
-					max = pix;
-				if(pix < min)
-					min = pix;
-			}
-		System.out.println("max= "+max+" min= "+min );
-		
-		short LUT_contrast[] = new short[256];
-		
-		for (int i = min; i < max+1; i++) {
-			//LUT_contrast[i] = (short) normalize(i, min, max, 0, 255);
-			System.out.print(LUT_contrast[i] +" ");
-		}
-		
-		dest = new BufferedImage(input.getWidth(), input.getHeight(), input.getType());
-		
-		ShortLookupTable sLUT = new ShortLookupTable(0, LUT_contrast);
-		LookupOp op = new LookupOp(sLUT, null);
-		op.filter(input, dest);
-		
-		return dest;
-	}
+	
 }
