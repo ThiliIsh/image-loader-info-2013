@@ -12,6 +12,7 @@ import java.awt.Font;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.SwingConstants;
 
 public class JAboutDlg extends JDialog {
 
@@ -19,6 +20,7 @@ public class JAboutDlg extends JDialog {
 	private JLabel lblAplicatieDeProcesare;
 	private JLabel lblInfoAnul;
 	private JLabel lblNewLabel;
+	private JLabel lblVisitHttpscodegooglecompimageloaderinfo;
 
 
 	/**
@@ -27,25 +29,32 @@ public class JAboutDlg extends JDialog {
 	public JAboutDlg() {
 		setModal(true);
 		setTitle("About");
-		setBounds(100, 100, 450, 134);
+		setBounds(100, 100, 361, 164);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		
-		lblAplicatieDeProcesare = new JLabel("Aplicatie de procesare a imaginilor");
+		lblAplicatieDeProcesare = new JLabel("Image processing application");
+		lblAplicatieDeProcesare.setHorizontalAlignment(SwingConstants.CENTER);
 		lblAplicatieDeProcesare.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblAplicatieDeProcesare.setBounds(105, 11, 238, 22);
+		lblAplicatieDeProcesare.setBounds(60, 11, 224, 22);
 		contentPanel.add(lblAplicatieDeProcesare);
 		
-		lblInfoAnul = new JLabel("Copyright Info anul 3, 2013");
-		lblInfoAnul.setBounds(131, 44, 167, 14);
+		lblInfoAnul = new JLabel("<html>\r\nCopyright Info III, 2013 <br>\r\nEmail sibiuu@yahoo.com\r\n</html>");
+		lblInfoAnul.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoAnul.setBounds(131, 36, 153, 28);
 		contentPanel.add(lblInfoAnul);
 		
 		lblNewLabel = new JLabel("");
 		lblNewLabel.setIcon(new ImageIcon(JAboutDlg.class.getResource("/ImageLoader/icons24x24/home_green_24.png")));
-		lblNewLabel.setBounds(64, 11, 31, 41);
+		lblNewLabel.setBounds(70, 36, 34, 28);
 		contentPanel.add(lblNewLabel);
+		
+		lblVisitHttpscodegooglecompimageloaderinfo = new JLabel("Visit https://code.google.com/p/image-loader-info-2013 ");
+		lblVisitHttpscodegooglecompimageloaderinfo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblVisitHttpscodegooglecompimageloaderinfo.setBounds(30, 75, 284, 14);
+		contentPanel.add(lblVisitHttpscodegooglecompimageloaderinfo);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.CENTER));

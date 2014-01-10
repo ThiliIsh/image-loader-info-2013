@@ -55,11 +55,11 @@ public class JContrastDlg extends JDialog {
 		contentPanel.setLayout(null);
 		
 		slider = new JSlider();
-		slider.setMinimum(1);
+		slider.setMajorTickSpacing(100);
 
 		slider.setMaximum(2000);
-		slider.setValue(1000);
-		slider.setMinorTickSpacing(20);
+		slider.setValue(100);
+		slider.setMinorTickSpacing(10);
 		slider.setPaintTicks(true);
 		
 		slider.setPaintLabels(true);
@@ -109,7 +109,7 @@ public class JContrastDlg extends JDialog {
 
 	protected void onSlide() {
 		float scaleVal;
-		scaleVal = 1.0f * slider.getValue()/1000.0f;
+		scaleVal = 1.0f * slider.getValue()/100.0f;
 		textField.setText(""+scaleVal);
 		
 		

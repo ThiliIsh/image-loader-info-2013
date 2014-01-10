@@ -48,20 +48,20 @@ public class JThresholdDlg extends JDialog {
 		
 		
 		setTitle("Threshold (prag)");
-		setBounds(100, 100, 450, 155);
+		setBounds(100, 100, 396, 155);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		
 		slider = new JSlider();
+		slider.setPaintTicks(true);
+		slider.setMajorTickSpacing(85);
+		slider.setPaintLabels(true);
 
 		slider.setMaximum(255);
 		slider.setValue(127);
 		slider.setMinorTickSpacing(10);
-		slider.setPaintTicks(true);
-		
-		slider.setPaintLabels(true);
 		
 		slider.setBounds(23, 29, 249, 49);
 		contentPanel.add(slider);
@@ -74,7 +74,7 @@ public class JThresholdDlg extends JDialog {
 		
 		textField = new JTextField();
 		textField.setEnabled(false);
-		textField.setBounds(282, 32, 86, 20);
+		textField.setBounds(282, 32, 66, 20);
 		contentPanel.add(textField);
 		textField.setColumns(10);
 		{
