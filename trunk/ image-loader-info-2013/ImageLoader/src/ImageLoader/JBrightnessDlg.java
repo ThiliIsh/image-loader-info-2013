@@ -55,16 +55,17 @@ public class JBrightnessDlg extends JDialog {
 		contentPanel.setLayout(null);
 		
 		slider = new JSlider();
+		slider.setMajorTickSpacing(85);
 		slider.setMinimum(-255);
 
 		slider.setMaximum(255);
 		slider.setValue(0);
-		slider.setMinorTickSpacing(20);
+		slider.setMinorTickSpacing(5);
 		slider.setPaintTicks(true);
 		
 		slider.setPaintLabels(true);
 		
-		slider.setBounds(23, 29, 249, 49);
+		slider.setBounds(23, 29, 294, 49);
 		contentPanel.add(slider);
 		
 		slider.addChangeListener(new ChangeListener() {
@@ -75,7 +76,7 @@ public class JBrightnessDlg extends JDialog {
 		
 		textField = new JTextField();
 		textField.setEnabled(false);
-		textField.setBounds(282, 32, 86, 20);
+		textField.setBounds(327, 29, 86, 20);
 		contentPanel.add(textField);
 		textField.setColumns(10);
 		{
@@ -110,7 +111,7 @@ public class JBrightnessDlg extends JDialog {
 	protected void onSlide() {
 		textField.setText(""+slider.getValue());
 				
-		parentImagePanel.setImage(ImageUtil.brightness(originalImg, slider.getValue()));
+		parentImagePanel.setImage(ImageUtil.brightnessV1(originalImg, slider.getValue()));
 		
 		
 	}
