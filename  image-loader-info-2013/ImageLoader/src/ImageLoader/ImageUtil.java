@@ -10,6 +10,7 @@ import java.awt.image.RescaleOp;
 import java.awt.image.ShortLookupTable;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -115,7 +116,25 @@ public class ImageUtil {
         
         return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
-	
+// processing
+	public static BufferedImage simpleNoise(BufferedImage img) {
+
+		BufferedImage dest = null;
+		Random rand = new Random();
+
+		dest = new BufferedImage(img.getWidth(), img.getHeight(),
+				BufferedImage.TYPE_4BYTE_ABGR);
+
+		for (int x = 0; x < dest.getWidth(); x++)
+			for (int y = 0; y < dest.getHeight(); y++) {
+				dest.getRaster().setSample(x, y, 0, rand.nextInt(255));
+				dest.getRaster().setSample(x, y, 1, rand.nextInt(255));
+				dest.getRaster().setSample(x, y, 2, rand.nextInt(255));
+				dest.getRaster().setSample(x, y, 3, 255);
+			}
+		return dest;
+
+	}
 	// flip image horizontally
 	public static BufferedImage flipImageHorizontally(BufferedImage img) {
 		BufferedImage flipped = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
@@ -142,6 +161,35 @@ public class ImageUtil {
 		return flipped;
 	}
 
+	public static BufferedImage pixelate(BufferedImage img, int size) {
+		BufferedImage dest = new BufferedImage(img.getWidth(), img.getHeight(),
+				img.getType());
+		if (((img.getWidth() % size) != 0) || (img.getHeight() % size) != 0) {
+			System.out.println("inappropriate pixel size");
+			return null;
+		}
+		for (int x = 0; x < img.getWidth(); x += size) {
+			for (int y = 0; y < img.getHeight(); y += size) {
+
+				int px = 0;
+
+				for (int xi = 0; xi < size; xi++) {
+					for (int yi = 0; yi < size; yi++) {
+						px += img.getRGB(x, y);
+						px = px / 2;
+					}
+				}
+
+				for (int xi = 0; xi < size; xi++) {
+					for (int yi = 0; yi < size; yi++) {
+						dest.setRGB(x + xi, y + yi, px);
+					}
+				}
+			}
+		}
+
+		return dest;
+	}	
 // LUT operations
 	
 	public static BufferedImage negativate(BufferedImage input) {

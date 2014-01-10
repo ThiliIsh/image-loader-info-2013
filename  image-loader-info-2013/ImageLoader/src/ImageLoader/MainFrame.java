@@ -92,6 +92,8 @@ public class MainFrame extends JFrame {
 	private final JBrightnessDlg brightnessDlg;
 	private final JContrastDlg contrastDlg;
 	private final JRGBBalanceDlg rgbBalanceDlg;
+	private final JPixelateDlg pixelateDlg;
+	
 	private JMenuItem mntmThreshold;
 	private JMenuItem mntmBrightness;
 	private JMenuItem mntmContrast;
@@ -110,6 +112,9 @@ public class MainFrame extends JFrame {
 	private JSeparator separator_1;
 	private JMenuItem mntmRgbBalance;
 	private JMenuItem mntmPrint;
+	private JMenu mnNoise;
+	private JMenuItem mntmSimpleNoise;
+	private JMenuItem mntmPixelate;
 
 	public static void main(String[] args) {
 		try {
@@ -147,6 +152,7 @@ public class MainFrame extends JFrame {
 		brightnessDlg = new JBrightnessDlg(this);
 		contrastDlg = new JContrastDlg(this);
 		rgbBalanceDlg = new JRGBBalanceDlg(this);
+		pixelateDlg = new JPixelateDlg(this);
 
 		fileChooser.setFileFilter(new FileNameExtensionFilter("Image files",
 				"jpg", "jpeg", "png", "bmp", "gif"));
@@ -350,6 +356,25 @@ public class MainFrame extends JFrame {
 				imagePanel.setImage(ImageUtil.negativate(imagePanel.getImage()));
 			}
 		});
+		
+		mnNoise = new JMenu("Noise");
+		mnEdit.add(mnNoise);
+		
+		mntmSimpleNoise = new JMenuItem("Simple Noise");
+		mntmSimpleNoise.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				imagePanel.setImage(ImageUtil.simpleNoise(imagePanel.getImage()));
+			}
+		});
+		mnNoise.add(mntmSimpleNoise);
+		
+		mntmPixelate = new JMenuItem("Pixelate");
+		mntmPixelate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				pixelateDlg.setVisible(true);
+			}
+		});
+		mnEdit.add(mntmPixelate);
 		mnEdit.add(mntmNegativate);
 
 		mntmTogray = new JMenuItem("ToGray");
