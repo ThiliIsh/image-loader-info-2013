@@ -245,6 +245,46 @@ public class ImageUtil {
 		
 		return dest;
 	}
+	public static BufferedImage toGrayscale(BufferedImage img, int version) {
+		// version 0 - media aritmetica
+		// version 1 - media ponderata
+		BufferedImage dest = null;
+		int red, green, blue;
+		if ((img.getType() == BufferedImage.TYPE_INT_BGR)
+				|| (img.getType() == BufferedImage.TYPE_3BYTE_BGR)
+				|| (img.getType() == BufferedImage.TYPE_4BYTE_ABGR)
+				|| (img.getType() == BufferedImage.TYPE_4BYTE_ABGR_PRE)) {
+
+			dest = new BufferedImage(img.getWidth(), img.getHeight(),
+					BufferedImage.TYPE_BYTE_GRAY);
+
+			for (int x = 0; x < img.getWidth(); x++)
+				for (int y = 0; y < img.getHeight(); y++) {
+					red = img.getRaster().getSample(x, y, 0);
+					green = img.getRaster().getSample(x, y, 1);
+					blue = img.getRaster().getSample(x, y, 2);
+
+					switch (version) {
+					case 0: {
+						dest.getRaster().setSample(x, y, 0,
+								(red + green + blue) / 3);
+						break;
+					}
+					case 1: {
+						dest.getRaster().setSample(x, y, 0,
+								(red * 0.3 + green * 0.59 + blue * 0.11));
+
+						break;
+					}
+					}
+				}
+		} else {
+			JOptionPane.showMessageDialog(null, "Wrong image format! No color image", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		return (dest == null) ? img : dest;
+	}
+	
 	public static BufferedImage threshold(BufferedImage input, int prag) {
 		BufferedImage dest = null;
 		
