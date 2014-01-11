@@ -96,6 +96,8 @@ public class MainFrame extends JFrame {
 	private final JHistogramThresholdDlg histogramThresholdDlg;
 	private final JGammaContrastDlg gammaContrastDlg;
 	private final JBitPlaneSlicingDlg bitPlaneSlicingDlg;
+	private final JResizeDlg resizeDlg;
+	private final JRotateDlg rotateDlg;
 	
 	
 	private JMenuItem mntmThreshold;
@@ -132,6 +134,8 @@ public class MainFrame extends JFrame {
 	private JMenuItem mntmEdge;
 	private JMenuItem mntmScreenShot;
 	private JMenuItem mntmBitPlaneSlicing;
+	private JMenuItem mntmResize;
+	private JMenuItem mntmRotate;
 
 	public static void main(String[] args) {
 		try {
@@ -173,6 +177,9 @@ public class MainFrame extends JFrame {
 		histogramThresholdDlg = new JHistogramThresholdDlg(this);
 		gammaContrastDlg = new JGammaContrastDlg(this);
 		bitPlaneSlicingDlg = new JBitPlaneSlicingDlg(this);
+		resizeDlg = new JResizeDlg(this);
+		rotateDlg = new JRotateDlg(this);
+
 
 		
 		fileChooser.setFileFilter(new FileNameExtensionFilter("Image files",
@@ -514,6 +521,14 @@ public class MainFrame extends JFrame {
 			}
 		});
 		
+		mntmPosterize = new JMenuItem("Posterize");
+		mntmPosterize.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				imagePanel.setImage(ImageUtil.posterize(imagePanel.getImage()));				
+			}
+		});
+		mnEdit.add(mntmPosterize);
+		
 		mnConvolutionOperations = new JMenu("Convolution Operations");
 		mnEdit.add(mnConvolutionOperations);
 		
@@ -540,15 +555,23 @@ public class MainFrame extends JFrame {
 			}
 		});
 		mnConvolutionOperations.add(mntmEdge);
-		mnEdit.add(mntmHistogramThreshold);
 		
-		mntmPosterize = new JMenuItem("Posterize");
-		mntmPosterize.addActionListener(new ActionListener() {
+		mntmResize = new JMenuItem("Resize...");
+		mntmResize.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				imagePanel.setImage(ImageUtil.posterize(imagePanel.getImage()));				
+				resizeDlg.setVisible(true);
 			}
 		});
-		mnEdit.add(mntmPosterize);
+		mnEdit.add(mntmResize);
+		
+		mntmRotate = new JMenuItem("Rotate...");
+		mntmRotate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				rotateDlg.setVisible(true);
+			}
+		});
+		mnEdit.add(mntmRotate);
+		mnEdit.add(mntmHistogramThreshold);
 
 		mnHelp = new JMenu("Help");
 		mnHelp.setMnemonic('H');
@@ -664,8 +687,8 @@ public class MainFrame extends JFrame {
 		try {
 			// ImageIcon IMG = new
 			// ImageIcon((BufferedImage)clip.getData(DataFlavor.imageFlavor));
-			BufferedImage bImage = (BufferedImage) clip
-					.getData(DataFlavor.imageFlavor);
+			BufferedImage bImage = (BufferedImage) clip.getData(DataFlavor.imageFlavor);
+			
 			// imagePanel.setImage((BufferedImage) IMG.getImage());
 			imagePanel.setImage(bImage);
 		} catch (UnsupportedFlavorException e1) {

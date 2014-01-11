@@ -117,8 +117,8 @@ public class JContrastDlg extends JDialog {
 		float scaleVal;
 		int sVal= slider.getValue();
 		if(sVal == 0) scaleVal = 1;
-		else if(sVal > 0) scaleVal = sVal;
-		else scaleVal = -1.0f * sVal/255;
+		else if(sVal > 0) scaleVal = 1.0f+1.0f*sVal/255.0f;
+		else scaleVal = 1.0f * (255.0f+sVal)/255.0f;
 		
 		//scaleVal = 1.0f * slider.getValue()/100.0f;
 		
