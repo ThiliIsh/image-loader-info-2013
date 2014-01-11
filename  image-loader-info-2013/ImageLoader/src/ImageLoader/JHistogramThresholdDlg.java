@@ -1,6 +1,7 @@
 package ImageLoader;
-
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
+import java.awt.Event;
 import java.awt.FlowLayout;
 import java.awt.image.BufferedImage;
 
@@ -10,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.JLabel;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.awt.event.ActionListener;
@@ -17,20 +19,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class JBrightnessDlg extends JDialog {
+
+public class JHistogramThresholdDlg extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JSlider slider;
 	private JTextField textField;
-	private MainFrame parent;
+	private JLabel lblThresholdValue;
 	private ImagePanel parentImagePanel;
 	private BufferedImage originalImage = null;
-	
+
 	/**
 	 * Create the dialog.
 	 */
-	public JBrightnessDlg(MainFrame frame) {
-		
+	public JHistogramThresholdDlg(MainFrame frame) {
 		super(frame, true);
 		
 		addWindowListener(new WindowAdapter() {
@@ -38,9 +40,10 @@ public class JBrightnessDlg extends JDialog {
 			public void windowActivated(WindowEvent e) {
 				if (originalImage==null){
 					originalImage = parentImagePanel.getImage();
-					slider.setValue(0);
-					textField.setText(""+0);
+					slider.setValue(130);
+					textField.setText(""+130);
 				}
+
 			}
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -49,44 +52,37 @@ public class JBrightnessDlg extends JDialog {
 		});
 		
 		
-		parent = frame;
-		parentImagePanel = parent.getImagePanel();
+		parentImagePanel = frame.getImagePanel();
 		originalImage = parentImagePanel.getImage();
 		
-		
-		
-		setTitle("Brightness");
-		setBounds(100, 100, 450, 155);
+		setTitle("Histogram Threshold");
+		setBounds(100, 100, 450, 210);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		
 		slider = new JSlider();
+		slider.setSnapToTicks(true);
+		
 		slider.setMajorTickSpacing(85);
-		slider.setMinimum(-255);
-
-		slider.setMaximum(255);
-		slider.setValue(0);
-		slider.setMinorTickSpacing(5);
+		slider.setMinorTickSpacing(10);
 		slider.setPaintTicks(true);
-		
 		slider.setPaintLabels(true);
-		
-		slider.setBounds(23, 29, 294, 49);
+		slider.setMaximum(255);
+		slider.setBounds(27, 27, 376, 68);
+		slider.setValue(128);
 		contentPanel.add(slider);
 		
-		slider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				onSlide();
-			}
-		});
-		
 		textField = new JTextField();
-		textField.setEnabled(false);
-		textField.setBounds(327, 29, 86, 20);
+		textField.setText(String.valueOf(slider.getValue()));
+		textField.setBounds(148, 108, 86, 20);
 		contentPanel.add(textField);
 		textField.setColumns(10);
+		
+		lblThresholdValue = new JLabel("Threshold value:");
+		lblThresholdValue.setBounds(27, 111, 111, 14);
+		contentPanel.add(lblThresholdValue);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -107,18 +103,18 @@ public class JBrightnessDlg extends JDialog {
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						onCancel();
+				
 					}
 				});
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
 		}
-	}
-
-	private void onSlide() {
-		textField.setText(""+slider.getValue());
-		parentImagePanel.setImage(ImageUtil.brightnessV1(originalImage, slider.getValue()));
-		
+		slider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				onSlide(e);
+			}
+		});
 	}
 	private void onOK(ActionEvent e){
 		originalImage = null;
@@ -128,5 +124,9 @@ public class JBrightnessDlg extends JDialog {
 		parentImagePanel.setImage(originalImage);
 		originalImage = null;
 		dispose();
-	}	
+	}
+	protected void onSlide(ChangeEvent e) {
+		textField.setText(""+slider.getValue());
+		parentImagePanel.setImage(ImageUtil.histogramThreshold(originalImage, slider.getValue()));			
+	}
 }

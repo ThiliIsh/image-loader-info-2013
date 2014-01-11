@@ -25,7 +25,7 @@ public class JPixelateDlg extends JDialog {
 	private JTextField textField;
 	private MainFrame parent;
 	private ImagePanel parentImagePanel;
-	private BufferedImage originalImg;
+	private BufferedImage originalImage = null;
 	private JLabel lblPixelSize;
 	
 	/**
@@ -38,15 +38,22 @@ public class JPixelateDlg extends JDialog {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowActivated(WindowEvent e) {
-				originalImg = parentImagePanel.getImage();
-				slider.setValue(8);
+				if (originalImage==null){
+					originalImage = parentImagePanel.getImage();
+					slider.setValue(8);
+				}
+
+			}
+			@Override
+			public void windowClosing(WindowEvent e) {
+				onCancel();
 			}
 		});
 		
 		
 		parent = frame;
 		parentImagePanel = parent.getImagePanel();
-		originalImg = parentImagePanel.getImage();
+		originalImage = parentImagePanel.getImage();
 		
 		
 		
@@ -78,7 +85,7 @@ public class JPixelateDlg extends JDialog {
 		textField = new JTextField();
 		textField.setText("8");
 		textField.setEnabled(false);
-		textField.setBounds(80, 71, 276, 20);
+		textField.setBounds(140, 71, 216, 20);
 		contentPanel.add(textField);
 		textField.setColumns(10);
 		
@@ -93,7 +100,7 @@ public class JPixelateDlg extends JDialog {
 				JButton okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						dispose();
+						onOK(e);
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -104,8 +111,7 @@ public class JPixelateDlg extends JDialog {
 				JButton cancelButton = new JButton("Cancel");
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						parentImagePanel.setImage(originalImg);
-						dispose();
+						onCancel();
 					}
 				});
 				cancelButton.setActionCommand("Cancel");
@@ -113,14 +119,22 @@ public class JPixelateDlg extends JDialog {
 			}
 		}
 	}
-
+	private void onOK(ActionEvent e){
+		originalImage = null;
+		dispose();
+	}
+	private void onCancel(){
+		parentImagePanel.setImage(originalImage);
+		originalImage = null;
+		dispose();
+	}
 	private void onSlide(ChangeEvent e){
 		int val = slider.getValue();
-		if(((originalImg.getWidth() % val)!=0) || (originalImg.getHeight() % val)!=0){
+		if(((originalImage.getWidth() % val)!=0) || (originalImage.getHeight() % val)!=0){
 			textField.setText(""+val+" : inappropriate pixel size");
 		}
 		else{
-			parentImagePanel.setImage(ImageUtil.pixelate(originalImg, slider.getValue()));
+			parentImagePanel.setImage(ImageUtil.pixelate(originalImage, slider.getValue()));
 			textField.setText(""+val);
 		}
 		}

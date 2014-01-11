@@ -25,7 +25,7 @@ public class JRGBBalanceDlg extends JDialog {
 	private JTextField rTF;
 	private MainFrame parent;
 	private ImagePanel parentImagePanel;
-	private BufferedImage originalImg;
+	private BufferedImage originalImage = null;
 	private JSlider gSlider;
 	private JTextField gTF;
 	private JSlider bSlider;
@@ -44,17 +44,23 @@ public class JRGBBalanceDlg extends JDialog {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowActivated(WindowEvent e) {
-				originalImg = parentImagePanel.getImage();
+				if (originalImage==null){
+					originalImage = parentImagePanel.getImage();
+					rSlider.setValue(0);
+					gSlider.setValue(0);
+					bSlider.setValue(0);
+				}
+
+			}
+			@Override
+			public void windowClosing(WindowEvent e) {
+				onCancel();
 			}
 		});
 		
-		
 		parent = frame;
 		parentImagePanel = parent.getImagePanel();
-		originalImg = parentImagePanel.getImage();
-		
-		
-		
+			
 		setTitle("RGB Balance");
 		setBounds(100, 100, 450, 311);
 		getContentPane().setLayout(new BorderLayout());
@@ -153,7 +159,7 @@ public class JRGBBalanceDlg extends JDialog {
 				JButton okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						dispose();
+						onOK(e);
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -164,8 +170,7 @@ public class JRGBBalanceDlg extends JDialog {
 				JButton cancelButton = new JButton("Cancel");
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						parentImagePanel.setImage(originalImg);
-						dispose();
+						onCancel();
 					}
 				});
 				cancelButton.setActionCommand("Cancel");
@@ -173,16 +178,23 @@ public class JRGBBalanceDlg extends JDialog {
 			}
 		}
 	}
-
+	private void onOK(ActionEvent e){
+		originalImage = null;
+		dispose();
+	}
+	private void onCancel(){
+		parentImagePanel.setImage(originalImage);
+		originalImage = null;
+		dispose();
+	}
 	protected void onSlide() {
 		
 		rTF.setText(""+rSlider.getValue());
 		gTF.setText(""+gSlider.getValue());
 		bTF.setText(""+bSlider.getValue());
 		
-		if(!rSlider.getValueIsAdjusting() && !gSlider.getValueIsAdjusting() && !bSlider.getValueIsAdjusting())
-		parentImagePanel.setImage(ImageUtil.RGBbalanceV1(originalImg, rSlider.getValue(),gSlider.getValue(),bSlider.getValue()));
-		
-		
+		//if(!rSlider.getValueIsAdjusting() && !gSlider.getValueIsAdjusting() && !bSlider.getValueIsAdjusting())
+		parentImagePanel.setImage(ImageUtil.RGBbalanceV2(originalImage, rSlider.getValue(),gSlider.getValue(),bSlider.getValue()));
+
 	}
 }
