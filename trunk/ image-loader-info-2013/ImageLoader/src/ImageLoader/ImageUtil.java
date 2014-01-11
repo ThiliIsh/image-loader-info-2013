@@ -96,6 +96,8 @@ public class ImageUtil {
 					+ img.getColorModel().getNumColorComponents() + "\r\n");
 			info.append("Number of bands: " + img.getRaster().getNumBands()
 					+ "\r\n");
+			info.append("Image type: " + getImageTypeName(img)
+					+ "\r\n");
 		}
 		return info.toString();
 	}
@@ -105,7 +107,32 @@ public class ImageUtil {
 		JOptionPane.showMessageDialog(parentComponent, getImageProperties(img),
 				"Image Properties", JOptionPane.INFORMATION_MESSAGE);
 	}
-
+    public static String getImageTypeName(BufferedImage img) {
+        switch (img.getType()) {
+	        case BufferedImage.TYPE_3BYTE_BGR: return "TYPE_3BYTE_BGR";
+	        case BufferedImage.TYPE_4BYTE_ABGR: return "TYPE_4BYTE_ABGR";
+	        case BufferedImage.TYPE_4BYTE_ABGR_PRE: return "TYPE_4BYTE_ABGR_PRE";
+	        case BufferedImage.TYPE_BYTE_BINARY: return "TYPE_BYTE_BINARY";
+	        case BufferedImage.TYPE_BYTE_GRAY: return "TYPE_BYTE_GRAY";
+	        case BufferedImage.TYPE_BYTE_INDEXED: return "TYPE_BYTE_INDEXED";
+	        case BufferedImage.TYPE_CUSTOM: return "TYPE_CUSTOM";
+	        case BufferedImage.TYPE_INT_ARGB: return "TYPE_INT_ARGB";
+	        case BufferedImage.TYPE_INT_ARGB_PRE: return "TYPE_INT_ARGB_PRE";
+	        case BufferedImage.TYPE_INT_BGR: return "TYPE_INT_BGR";
+	        case BufferedImage.TYPE_INT_RGB: return "TYPE_INT_RGB";
+	        case BufferedImage.TYPE_USHORT_555_RGB: return "TYPE_USHORT_555_RGB";
+	        case BufferedImage.TYPE_USHORT_565_RGB: return "TYPE_USHORT_565_RGB";
+	        case BufferedImage.TYPE_USHORT_GRAY: return "TYPE_USHORT_GRAY";
+        }
+        return "Unsupported type: " + img.getType();
+}
+    public static BufferedImage convertImageType(BufferedImage src, int bufImgType) {
+        BufferedImage dest= new BufferedImage(src.getWidth(), src.getHeight(), bufImgType);
+        Graphics2D g2d= dest.createGraphics();
+        g2d.drawImage(src, 0, 0, null);
+        g2d.dispose();
+        return dest;
+}
 	public static BufferedImage toBufferedImage(Image image) {
 
 		BufferedImage bufferedImage = new BufferedImage(image.getWidth(null),
@@ -719,11 +746,10 @@ public class ImageUtil {
 		for (int i = 0; i < blurKernel.length; i++) {
 			blurKernel[i] = val;
 		}
-		//ConvolveOp cv = new ConvolveOp(new Kernel(5, 5, blurKernel));
-		 ConvolveOp cv= new ConvolveOp(new Kernel(5, 5,
-		 blurKernel),ConvolveOp.EDGE_NO_OP,null);
-		// ConvolveOp cv= new ConvolveOp(new Kernel(5, 5,
-		// blurKernel),ConvolveOp.EDGE_NO_OP,null);
+		ConvolveOp cv = new ConvolveOp(new Kernel(5, 5, blurKernel));
+
+		// ConvolveOp cv= new ConvolveOp(new Kernel(5, 5, blurKernel),ConvolveOp.EDGE_ZERO_FILL,null);
+		// ConvolveOp cv= new ConvolveOp(new Kernel(5, 5, blurKernel),ConvolveOp.EDGE_NO_OP,null);
 
 		cv.filter(img, dest);
 		return dest;
@@ -733,8 +759,9 @@ public class ImageUtil {
 		BufferedImage dest = null;
 		dest = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
 
-		float[] sharpKernel = { 0.0f, -1.0f, 0.0f, -1.0f, 5.0f, -1.0f, 0.0f,
-				-1.0f, 0.0f };
+		float[] sharpKernel = { 0.0f, -1.0f, 0.0f, 
+								-1.0f, 5.0f, -1.0f, 
+								0.0f, -1.0f, 0.0f };
 
 		ConvolveOp cv = new ConvolveOp(new Kernel(3, 3, sharpKernel));
 

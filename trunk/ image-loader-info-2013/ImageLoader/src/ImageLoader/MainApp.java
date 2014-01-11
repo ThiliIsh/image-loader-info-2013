@@ -27,13 +27,13 @@ public class MainApp {
 		//ImageUtil.displayImage(ImageUtil.contrast(testIn,0.3f));
 		//ImageUtil.displayImage(ImageUtil.contrastStretching(testIn));
 		
-		ImageUtil.displayImage(ImageUtil.RGBbalanceV1(testIn, -255, 0, -255));
-		tc.stopPrMS();
-		tc.start();
-		ImageUtil.displayImage(ImageUtil.RGBbalanceV2(testIn, -255, 0, -255));
+		//ImageUtil.displayImage(ImageUtil.RGBbalanceV1(testIn, -255, 0, -255));
+
+		//ImageUtil.displayImage(ImageUtil.RGBbalanceV2(testIn, -255, 0, -255));
 		
 		//ImageUtil.displayImage(ImageUtil.RGB_brightness(testIn, 255, 255, -255));
 		//ImageUtil.displayImage(ImageUtil.RGB_brightness(testIn, -255, 0, 0));
+		ImageUtil.displayImage(ImageUtil.blur(testIn));
 		
 		tc.stopPrMS();
 
