@@ -24,7 +24,7 @@ public class JContrastDlg extends JDialog {
 	private JTextField textField;
 	private MainFrame parent;
 	private ImagePanel parentImagePanel;
-	private BufferedImage originalImg;
+	private BufferedImage originalImage;
 	
 	/**
 	 * Create the dialog.
@@ -36,16 +36,22 @@ public class JContrastDlg extends JDialog {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowActivated(WindowEvent e) {
-				originalImg = parentImagePanel.getImage();
+				if (originalImage==null){
+					originalImage = parentImagePanel.getImage();
+					slider.setValue(0);
+					textField.setText(""+0);
+				}
+
+			}
+			@Override
+			public void windowClosing(WindowEvent e) {
+				onCancel();
 			}
 		});
 		
 		
 		parent = frame;
 		parentImagePanel = parent.getImagePanel();
-		originalImg = parentImagePanel.getImage();
-		
-		
 		
 		setTitle("Contrast");
 		setBounds(100, 100, 450, 155);
@@ -55,11 +61,12 @@ public class JContrastDlg extends JDialog {
 		contentPanel.setLayout(null);
 		
 		slider = new JSlider();
-		slider.setMajorTickSpacing(100);
+		slider.setMinimum(-255);
+		slider.setMajorTickSpacing(85);
 
-		slider.setMaximum(2000);
-		slider.setValue(100);
-		slider.setMinorTickSpacing(10);
+		slider.setMaximum(255);
+		slider.setValue(0);
+		slider.setMinorTickSpacing(15);
 		slider.setPaintTicks(true);
 		
 		slider.setPaintLabels(true);
@@ -86,7 +93,7 @@ public class JContrastDlg extends JDialog {
 				JButton okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						dispose();
+						onOK(e);
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -97,8 +104,7 @@ public class JContrastDlg extends JDialog {
 				JButton cancelButton = new JButton("Cancel");
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						parentImagePanel.setImage(originalImg);
-						dispose();
+						onCancel();
 					}
 				});
 				cancelButton.setActionCommand("Cancel");
@@ -109,12 +115,24 @@ public class JContrastDlg extends JDialog {
 
 	protected void onSlide() {
 		float scaleVal;
-		scaleVal = 1.0f * slider.getValue()/100.0f;
+		int sVal= slider.getValue();
+		if(sVal == 0) scaleVal = 1;
+		else if(sVal > 0) scaleVal = sVal;
+		else scaleVal = -1.0f * sVal/255;
+		
+		//scaleVal = 1.0f * slider.getValue()/100.0f;
+		
 		textField.setText(""+scaleVal);
-		
-		
-		parentImagePanel.setImage(ImageUtil.contrast(originalImg, scaleVal));
-		
-		
+
+		parentImagePanel.setImage(ImageUtil.contrast(originalImage, scaleVal));
 	}
+	private void onOK(ActionEvent e){
+		originalImage = null;
+		dispose();
+	}
+	private void onCancel(){
+		parentImagePanel.setImage(originalImage);
+		originalImage = null;
+		dispose();
+	}	
 }

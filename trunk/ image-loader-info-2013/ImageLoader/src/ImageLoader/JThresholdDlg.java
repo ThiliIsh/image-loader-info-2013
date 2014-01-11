@@ -24,7 +24,7 @@ public class JThresholdDlg extends JDialog {
 	private JTextField textField;
 	private MainFrame parent;
 	private ImagePanel parentImagePanel;
-	private BufferedImage originalImg;
+	private BufferedImage originalImage = null;
 	
 	/**
 	 * Create the dialog.
@@ -36,16 +36,21 @@ public class JThresholdDlg extends JDialog {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowActivated(WindowEvent e) {
-				originalImg = parentImagePanel.getImage();
+				if (originalImage==null){
+					originalImage = parentImagePanel.getImage();
+					slider.setValue(127);
+				}
+
+			}
+			@Override
+			public void windowClosing(WindowEvent e) {
+				onCancel();
 			}
 		});
 		
 		
 		parent = frame;
 		parentImagePanel = parent.getImagePanel();
-		originalImg = parentImagePanel.getImage();
-		
-		
 		
 		setTitle("Threshold (prag)");
 		setBounds(100, 100, 396, 155);
@@ -85,7 +90,7 @@ public class JThresholdDlg extends JDialog {
 				JButton okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						dispose();
+						onOK(e);
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -96,8 +101,7 @@ public class JThresholdDlg extends JDialog {
 				JButton cancelButton = new JButton("Cancel");
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						parentImagePanel.setImage(originalImg);
-						dispose();
+						onCancel();
 					}
 				});
 				cancelButton.setActionCommand("Cancel");
@@ -108,10 +112,16 @@ public class JThresholdDlg extends JDialog {
 
 	protected void onSlide() {
 		textField.setText(""+slider.getValue());
-		
-		
-		parentImagePanel.setImage(ImageUtil.threshold(originalImg, slider.getValue()));
-		
-		
+		parentImagePanel.setImage(ImageUtil.threshold(originalImage, slider.getValue()));
+
 	}
+	private void onOK(ActionEvent e){
+		originalImage = null;
+		dispose();
+	}
+	private void onCancel(){
+		parentImagePanel.setImage(originalImage);
+		originalImage = null;
+		dispose();
+	}	
 }

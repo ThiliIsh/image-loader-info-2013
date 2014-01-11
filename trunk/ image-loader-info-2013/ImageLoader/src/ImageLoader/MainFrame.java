@@ -93,6 +93,10 @@ public class MainFrame extends JFrame {
 	private final JContrastDlg contrastDlg;
 	private final JRGBBalanceDlg rgbBalanceDlg;
 	private final JPixelateDlg pixelateDlg;
+	private final JHistogramThresholdDlg histogramThresholdDlg;
+	private final JGammaContrastDlg gammaContrastDlg;
+	private final JBitPlaneSlicingDlg bitPlaneSlicingDlg;
+	
 	
 	private JMenuItem mntmThreshold;
 	private JMenuItem mntmBrightness;
@@ -115,6 +119,19 @@ public class MainFrame extends JFrame {
 	private JMenu mnNoise;
 	private JMenuItem mntmSimpleNoise;
 	private JMenuItem mntmPixelate;
+	private JMenu mnToGrayscale;
+	private JMenuItem mntmAveraged;
+	private JMenuItem mntmWeighted;
+	private JMenuItem mntmHistogramThreshold;
+	private JMenuItem mntmPosterize;
+	private JMenuItem mntmExponentialContrast;
+	private JMenuItem mntmGammaContrast;
+	private JMenu mnConvolutionOperations;
+	private JMenuItem mntmBlur;
+	private JMenuItem mntmSharpen;
+	private JMenuItem mntmEdge;
+	private JMenuItem mntmScreenShot;
+	private JMenuItem mntmBitPlaneSlicing;
 
 	public static void main(String[] args) {
 		try {
@@ -153,7 +170,11 @@ public class MainFrame extends JFrame {
 		contrastDlg = new JContrastDlg(this);
 		rgbBalanceDlg = new JRGBBalanceDlg(this);
 		pixelateDlg = new JPixelateDlg(this);
+		histogramThresholdDlg = new JHistogramThresholdDlg(this);
+		gammaContrastDlg = new JGammaContrastDlg(this);
+		bitPlaneSlicingDlg = new JBitPlaneSlicingDlg(this);
 
+		
 		fileChooser.setFileFilter(new FileNameExtensionFilter("Image files",
 				"jpg", "jpeg", "png", "bmp", "gif"));
 
@@ -321,6 +342,14 @@ public class MainFrame extends JFrame {
 						MainFrame.class
 								.getResource("/ImageLoader/icons16x16/paste_clipboard_16.png")));
 		mnEdit.add(mntmPaste);
+		
+		mntmScreenShot = new JMenuItem("Screen Shot");
+		mntmScreenShot.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				imagePanel.setImage(ImageUtil.getScreenShot());
+			}
+		});
+		mnEdit.add(mntmScreenShot);
 
 		separator_1 = new JSeparator();
 		mnEdit.add(separator_1);
@@ -368,7 +397,7 @@ public class MainFrame extends JFrame {
 		});
 		mnNoise.add(mntmSimpleNoise);
 		
-		mntmPixelate = new JMenuItem("Pixelate");
+		mntmPixelate = new JMenuItem("Pixelate...");
 		mntmPixelate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				pixelateDlg.setVisible(true);
@@ -376,14 +405,33 @@ public class MainFrame extends JFrame {
 		});
 		mnEdit.add(mntmPixelate);
 		mnEdit.add(mntmNegativate);
-
-		mntmTogray = new JMenuItem("ToGray");
-		mntmTogray.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				imagePanel.setImage(ImageUtil.colorToGray(imagePanel.getImage()));
-			}
-		});
-		mnEdit.add(mntmTogray);
+		
+		mnToGrayscale = new JMenu("To Grayscale");
+		mnEdit.add(mnToGrayscale);
+				
+				mntmAveraged = new JMenuItem("Averaged");
+				mntmAveraged.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						imagePanel.setImage(ImageUtil.toGrayscale(imagePanel.getImage(),0));
+					}
+				});
+				mnToGrayscale.add(mntmAveraged);
+				
+				mntmWeighted = new JMenuItem("Weighted");
+				mntmWeighted.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						imagePanel.setImage(ImageUtil.toGrayscale(imagePanel.getImage(),1));
+					}
+				});
+				mnToGrayscale.add(mntmWeighted);
+		
+				mntmTogray = new JMenuItem("Grayscale (average all bands)");
+				mnToGrayscale.add(mntmTogray);
+				mntmTogray.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						imagePanel.setImage(ImageUtil.colorToGray(imagePanel.getImage()));
+					}
+				});
 
 		mntmThreshold = new JMenuItem("Threshold...");
 		mntmThreshold.addActionListener(new ActionListener() {
@@ -401,22 +449,29 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		mntmLogcontrast = new JMenuItem("LogContrast");
+		mntmLogcontrast = new JMenuItem("Logarithmic Contrast");
 		mntmLogcontrast.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				imagePanel.setImage(ImageUtil.logContrast(imagePanel.getImage()));
 			}
 		});
-		mnEdit.add(mntmLogcontrast);
-
-		mntmContraststretching = new JMenuItem("ContrastStretching");
-		mntmContraststretching.addActionListener(new ActionListener() {
+		
+		mntmBitPlaneSlicing = new JMenuItem("Bit Plane Slicing...");
+		mntmBitPlaneSlicing.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				imagePanel.setImage(ImageUtil.contrastStretching(imagePanel
-						.getImage()));
+				bitPlaneSlicingDlg.setVisible(true);
 			}
 		});
-		mnEdit.add(mntmContraststretching);
+		mnEdit.add(mntmBitPlaneSlicing);
+		mnEdit.add(mntmLogcontrast);
+		
+		mntmExponentialContrast = new JMenuItem("Exponential Contrast");
+		mntmExponentialContrast.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				imagePanel.setImage(ImageUtil.expContrast(imagePanel.getImage()));
+			}
+		});
+		mnEdit.add(mntmExponentialContrast);
 		mnEdit.add(mntmBrightness);
 
 		mntmContrast = new JMenuItem("Contrast...");
@@ -433,7 +488,67 @@ public class MainFrame extends JFrame {
 				rgbBalanceDlg.setVisible(true);
 			}
 		});
+		
+				mntmContraststretching = new JMenuItem("ContrastStretching");
+				mntmContraststretching.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						imagePanel.setImage(ImageUtil.contrastStretching(imagePanel
+								.getImage()));
+					}
+				});
+				
+				mntmGammaContrast = new JMenuItem("Gamma Contrast...");
+				mntmGammaContrast.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						gammaContrastDlg.setVisible(true);
+					}
+				});
+				mnEdit.add(mntmGammaContrast);
+				mnEdit.add(mntmContraststretching);
 		mnEdit.add(mntmRgbBalance);
+		
+		mntmHistogramThreshold = new JMenuItem("Histogram Threshold...");
+		mntmHistogramThreshold.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				histogramThresholdDlg.setVisible(true);
+			}
+		});
+		
+		mnConvolutionOperations = new JMenu("Convolution Operations");
+		mnEdit.add(mnConvolutionOperations);
+		
+		mntmBlur = new JMenuItem("Blur");
+		mntmBlur.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				imagePanel.setImage(ImageUtil.blur(imagePanel.getImage()));	
+			}
+		});
+		mnConvolutionOperations.add(mntmBlur);
+		
+		mntmSharpen = new JMenuItem("Sharpen");
+		mntmSharpen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				imagePanel.setImage(ImageUtil.sharpen(imagePanel.getImage()));	
+			}
+		});
+		mnConvolutionOperations.add(mntmSharpen);
+		
+		mntmEdge = new JMenuItem("Edge");
+		mntmEdge.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				imagePanel.setImage(ImageUtil.edge(imagePanel.getImage()));	
+			}
+		});
+		mnConvolutionOperations.add(mntmEdge);
+		mnEdit.add(mntmHistogramThreshold);
+		
+		mntmPosterize = new JMenuItem("Posterize");
+		mntmPosterize.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				imagePanel.setImage(ImageUtil.posterize(imagePanel.getImage()));				
+			}
+		});
+		mnEdit.add(mntmPosterize);
 
 		mnHelp = new JMenu("Help");
 		mnHelp.setMnemonic('H');
