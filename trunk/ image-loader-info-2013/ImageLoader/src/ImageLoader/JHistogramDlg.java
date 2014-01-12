@@ -22,21 +22,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Hashtable;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
-public class JBitPlaneSlicingDlg extends JDialog {
+public class JHistogramDlg extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private JSlider slider;
-	private JTextField textField;
 	private MainFrame parent;
+	private Histogram histogram = null;
+	private HistogramView histogramView = null;
 	private ImagePanel parentImagePanel;
 	private BufferedImage originalImage = null;
-	private JLabel lblBitValue;
+	private JPanel panel;
+	private JLabel lblBand;
+	private JComboBox comboBox;
+	private DefaultComboBoxModel comboBoxModel= null;
+	private JButton btnEqualise;
 	
 	/**
 	 * Create the dialog.
 	 */
-	public JBitPlaneSlicingDlg(MainFrame frame) {
+	public JHistogramDlg(MainFrame frame) {
 		
 		super(frame, true);
 		
@@ -45,8 +53,20 @@ public class JBitPlaneSlicingDlg extends JDialog {
 			public void windowActivated(WindowEvent e) {
 				if (originalImage==null){
 					originalImage = parentImagePanel.getImage();
-					slider.setValue(0);
-					textField.setText("0");
+					histogram.buildHistogram(originalImage);
+					histogramView.setHistogram(histogram);
+					
+					
+					int nrBands =	originalImage.getData().getNumBands();
+					String[] bandLabels = new String[nrBands];
+					for (int i = 0; i < bandLabels.length; i++) {
+						bandLabels[i] = ""+i;
+					}
+					comboBoxModel = new DefaultComboBoxModel(bandLabels);
+					comboBox.setModel(comboBoxModel);
+					comboBox.setSelectedIndex(0);
+					
+					System.out.print(histogram);
 				}
 
 			}
@@ -59,44 +79,34 @@ public class JBitPlaneSlicingDlg extends JDialog {
 		
 		parent = frame;
 		parentImagePanel = parent.getImagePanel();
-		//originalImage = parentImagePanel.getImage();
+		histogram = new Histogram();
+		histogramView = new HistogramView();
+		histogramView.setHistogram(histogram);
 		
-		
-		setTitle("Bit Plane Slicing");
+		setTitle("Histogram");
 		setBounds(100, 100, 450, 216);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		contentPanel.setLayout(null);
+		contentPanel.setLayout(new BorderLayout(0, 0));
+		contentPanel.add(histogramView,BorderLayout.CENTER);
 		
-		slider = new JSlider();
-		slider.setSnapToTicks(true);
-		slider.setPaintLabels(true);
-		slider.setMajorTickSpacing(1);
-
-		slider.setMaximum(7);
-		slider.setValue(0);
-		slider.setMinorTickSpacing(1);
-		slider.setPaintTicks(true);
+		panel = new JPanel();
+		contentPanel.add(panel, BorderLayout.EAST);
+		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
-		slider.setBounds(23, 11, 384, 80);
-		contentPanel.add(slider);
+		lblBand = new JLabel("Band:");
+		panel.add(lblBand);
 		
-		slider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				onSlide(e);
+		comboBox = new JComboBox();
+		comboBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				onSelectedBand(e);
 			}
 		});
-		
-		textField = new JTextField();
-		textField.setEnabled(false);
-		textField.setBounds(146, 99, 104, 20);
-		contentPanel.add(textField);
-		textField.setColumns(10);
-		
-		lblBitValue = new JLabel("Bit Level:");
-		lblBitValue.setBounds(33, 102, 95, 14);
-		contentPanel.add(lblBitValue);
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"0", "1", "2"}));
+		comboBox.setSelectedIndex(0);
+		panel.add(comboBox);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -108,6 +118,14 @@ public class JBitPlaneSlicingDlg extends JDialog {
 						onOK(e);
 					}
 				});
+				
+				btnEqualise = new JButton("Equalise");
+				btnEqualise.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						onEqualise();
+					}
+				});
+				buttonPane.add(btnEqualise);
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
@@ -126,6 +144,14 @@ public class JBitPlaneSlicingDlg extends JDialog {
 	}
 
 
+	protected void onEqualise() {
+		parentImagePanel.setImage(ImageUtil.histogramEqualise(originalImage));
+	}
+
+	protected void onSelectedBand(ItemEvent e) {
+		histogramView.setHistogram(histogram, comboBox.getSelectedIndex());
+	}
+
 	private void onOK(ActionEvent e){
 		originalImage = null;
 		dispose();
@@ -134,11 +160,5 @@ public class JBitPlaneSlicingDlg extends JDialog {
 		parentImagePanel.setImage(originalImage);
 		originalImage = null;
 		dispose();
-	}
-	private void onSlide(ChangeEvent e) {
-
-		textField.setText("" + slider.getValue());
-		
-		parentImagePanel.setImage(ImageUtil.getBitPlanes(originalImage, slider.getValue()));			
 	}
 }

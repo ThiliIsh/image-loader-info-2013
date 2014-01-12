@@ -12,6 +12,7 @@ import java.awt.image.BufferedImageFilter;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.awt.image.LookupOp;
+import java.awt.image.LookupTable;
 import java.awt.image.RescaleOp;
 import java.awt.image.ShortLookupTable;
 import java.io.File;
@@ -22,6 +23,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
 
 public class ImageUtil {
 	private static int nrOfTimesDrown = 0;
@@ -260,9 +262,7 @@ public class ImageUtil {
 					sum = sum + input.getRaster().getSample(x, y, b);
 
 				dest.getRaster().setSample(x, y, 0, sum / b);
-
 			}
-
 		return dest;
 	}
 
@@ -809,28 +809,28 @@ public class ImageUtil {
 		return buff;
 	}
 
-	static public BufferedImage GoL(BufferedImage image){
-		//BufferedImage dest = null;
-		int COLOR = 0x484848;
-		final ConvolveOp convolve = new ConvolveOp(new Kernel(3, 3, new float[]{
-		        1, 1, 1,
-		        1, 0.5f, 1,
-		        1, 1, 1}));
-
-		final LookupOp lookup;
-	    final short[] lookupTable = new short[256];
-	    lookupTable[180] = 0x48;
-	    lookupTable[216] = 0x48;
-	    lookupTable[252] = 0x48;
-	    lookup = new LookupOp(new ShortLookupTable(0, lookupTable), null);
-
-	    //nextGeneration
-		    image=convolve.filter(image, null);
-		    lookup.filter(image, image);
-		    //generation++;
-		return image;
-
-	}	
+//	static public BufferedImage GoL(BufferedImage image){
+//		//BufferedImage dest = null;
+//		int COLOR = 0x484848;
+//		final ConvolveOp convolve = new ConvolveOp(new Kernel(3, 3, new float[]{
+//		        1, 1, 1,
+//		        1, 0.5f, 1,
+//		        1, 1, 1}));
+//
+//		final LookupOp lookup;
+//	    final short[] lookupTable = new short[256];
+//	    lookupTable[180] = 0x48;
+//	    lookupTable[216] = 0x48;
+//	    lookupTable[252] = 0x48;
+//	    lookup = new LookupOp(new ShortLookupTable(0, lookupTable), null);
+//
+//	    //nextGeneration
+//		    image=convolve.filter(image, null);
+//		    lookup.filter(image, image);
+//		    //generation++;
+//		return image;
+//
+//	}	
 ////////////////////////////////////
 	
 	public static BufferedImage blend(BufferedImage img1, BufferedImage img2,
@@ -952,5 +952,70 @@ public class ImageUtil {
 			}
 
 		return dest;
-	}	
+	}
+	public static BufferedImage histogramEqualise(BufferedImage src) {
+		LookupTable lookupTable = null;
+		BufferedImage dest = null;
+		Histogram histogram = new Histogram();
+		histogram.buildHistogram(src);
+
+		if (src.getType() == BufferedImage.TYPE_BYTE_GRAY) {
+			short[] table = new short[256];
+
+			float scale = 255.0f / histogram.getPixelCount();
+			for (int i = 0; i < 256; i++) {
+				table[i] = (short) Math.round(scale
+						* histogram.getCumulativeFrequency(0, i));
+			}
+			//short[][] data = { table, table, table };
+			lookupTable = new ShortLookupTable(0, table);
+
+		}
+		else // presupunem ca e color !! trebuie revazuta deschiderea imaginilor
+			{
+			short[][] table = new short[3][256];
+
+			float scale = 255.0f / histogram.getPixelCount();
+			for (int j = 0; j < 3; j++)
+				for (int i = 0; i < 256; i++) {
+					table[j][i] = (short) Math.round(scale
+							* histogram.getCumulativeFrequency(j, i));
+					//System.out.print(table[j][i]+"\t");
+				}
+			
+			lookupTable = new ShortLookupTable(0, table);
+
+		} 
+		dest = new BufferedImage(src.getWidth(),src.getHeight(),src.getType());
+		
+		LookupOp op = new LookupOp(lookupTable, null);
+		op.filter(src, dest);
+		return dest;
+	}
+	public static BufferedImage add(BufferedImage imgA, BufferedImage imgB) {
+		BufferedImage dest = null;
+		if (imgA.getType() != imgB.getType()) {
+			JOptionPane.showMessageDialog(null, "Image type mismatch!");
+			return null;
+		}
+
+		int w = Math.min(imgA.getWidth(), imgB.getWidth());
+		int h = Math.min(imgA.getHeight(), imgB.getHeight());
+
+		dest = new BufferedImage(w, h, imgA.getType());
+		
+		
+		for (int y = 0; y < h; y++)
+			for (int x = 0; x < w; x++) {
+				for (int i = 0; i < imgA.getRaster().getNumBands(); i++) {
+
+					int gray = imgA.getRaster().getSample(x, y, i)-
+								imgB.getRaster().getSample(x, y, i);
+
+					dest.getRaster().setSample(x, y, i, gray);
+
+				}
+			}
+		return dest;
+	}
 }
