@@ -1,4 +1,4 @@
-package ImageLoader;
+package ImageLoader.util;
 
 import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
@@ -9,7 +9,7 @@ import java.io.IOException;
 public class ImageTransferable implements Transferable {
 	Image image;
 
-	ImageTransferable(Image img) {
+	public ImageTransferable(Image img) {
 		this.image = img;
 	}
 

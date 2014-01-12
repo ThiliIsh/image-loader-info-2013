@@ -1,4 +1,4 @@
-package ImageLoader;
+package ImageLoader.util;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 

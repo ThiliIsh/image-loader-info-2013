@@ -1,4 +1,4 @@
-package ImageLoader;
+package ImageLoader.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JSlider;
@@ -14,29 +13,28 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
+import ImageLoader.MainFrame;
+import ImageLoader.util.ImageUtil;
 
-import com.alee.managers.language.data.Text;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Hashtable;
 
-public class JBitPlaneSlicingDlg extends JDialog {
+public class JContrastDlg extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JSlider slider;
 	private JTextField textField;
 	private MainFrame parent;
 	private ImagePanel parentImagePanel;
-	private BufferedImage originalImage = null;
-	private JLabel lblBitValue;
+	private BufferedImage originalImage;
 	
 	/**
 	 * Create the dialog.
 	 */
-	public JBitPlaneSlicingDlg(MainFrame frame) {
+	public JContrastDlg(MainFrame frame) {
 		
 		super(frame, true);
 		
@@ -46,7 +44,7 @@ public class JBitPlaneSlicingDlg extends JDialog {
 				if (originalImage==null){
 					originalImage = parentImagePanel.getImage();
 					slider.setValue(0);
-					textField.setText("0");
+					textField.setText(""+0);
 				}
 
 			}
@@ -59,44 +57,39 @@ public class JBitPlaneSlicingDlg extends JDialog {
 		
 		parent = frame;
 		parentImagePanel = parent.getImagePanel();
-		//originalImage = parentImagePanel.getImage();
 		
-		
-		setTitle("Bit Plane Slicing");
-		setBounds(100, 100, 450, 216);
+		setTitle("Contrast");
+		setBounds(100, 100, 450, 155);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		
 		slider = new JSlider();
-		slider.setSnapToTicks(true);
-		slider.setPaintLabels(true);
-		slider.setMajorTickSpacing(1);
+		slider.setMinimum(-255);
+		slider.setMajorTickSpacing(85);
 
-		slider.setMaximum(7);
+		slider.setMaximum(255);
 		slider.setValue(0);
-		slider.setMinorTickSpacing(1);
+		slider.setMinorTickSpacing(15);
 		slider.setPaintTicks(true);
 		
-		slider.setBounds(23, 11, 384, 80);
+		slider.setPaintLabels(true);
+		
+		slider.setBounds(23, 29, 249, 49);
 		contentPanel.add(slider);
 		
 		slider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				onSlide(e);
+				onSlide();
 			}
 		});
 		
 		textField = new JTextField();
 		textField.setEnabled(false);
-		textField.setBounds(146, 99, 104, 20);
+		textField.setBounds(282, 32, 86, 20);
 		contentPanel.add(textField);
 		textField.setColumns(10);
-		
-		lblBitValue = new JLabel("Bit Level:");
-		lblBitValue.setBounds(33, 102, 95, 14);
-		contentPanel.add(lblBitValue);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -125,7 +118,19 @@ public class JBitPlaneSlicingDlg extends JDialog {
 		}
 	}
 
+	protected void onSlide() {
+		float scaleVal;
+		int sVal= slider.getValue();
+		if(sVal == 0) scaleVal = 1;
+		else if(sVal > 0) scaleVal = 1.0f+1.0f*sVal/255.0f;
+		else scaleVal = 1.0f * (255.0f+sVal)/255.0f;
+		
+		//scaleVal = 1.0f * slider.getValue()/100.0f;
+		
+		textField.setText(""+scaleVal);
 
+		parentImagePanel.setImage(ImageUtil.contrast(originalImage, scaleVal));
+	}
 	private void onOK(ActionEvent e){
 		originalImage = null;
 		dispose();
@@ -134,11 +139,5 @@ public class JBitPlaneSlicingDlg extends JDialog {
 		parentImagePanel.setImage(originalImage);
 		originalImage = null;
 		dispose();
-	}
-	private void onSlide(ChangeEvent e) {
-
-		textField.setText("" + slider.getValue());
-		
-		parentImagePanel.setImage(ImageUtil.getBitPlanes(originalImage, slider.getValue()));			
-	}
+	}	
 }

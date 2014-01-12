@@ -1,4 +1,4 @@
-package ImageLoader;
+package ImageLoader.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -17,6 +17,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JLabel;
+
+import ImageLoader.MainFrame;
+import ImageLoader.util.ImageUtil;
 
 
 public class JRGBBalanceDlg extends JDialog {

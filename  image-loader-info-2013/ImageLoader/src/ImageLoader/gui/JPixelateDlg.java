@@ -1,4 +1,4 @@
-package ImageLoader;
+package ImageLoader.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -12,14 +12,17 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.JLabel;
 
-public class JThresholdDlg extends JDialog {
+import ImageLoader.MainFrame;
+import ImageLoader.util.ImageUtil;
+
+
+public class JPixelateDlg extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JSlider slider;
@@ -27,11 +30,12 @@ public class JThresholdDlg extends JDialog {
 	private MainFrame parent;
 	private ImagePanel parentImagePanel;
 	private BufferedImage originalImage = null;
+	private JLabel lblPixelSize;
 	
 	/**
 	 * Create the dialog.
 	 */
-	public JThresholdDlg(MainFrame frame) {
+	public JPixelateDlg(MainFrame frame) {
 		
 		super(frame, true);
 		
@@ -40,7 +44,7 @@ public class JThresholdDlg extends JDialog {
 			public void windowActivated(WindowEvent e) {
 				if (originalImage==null){
 					originalImage = parentImagePanel.getImage();
-					slider.setValue(127);
+					slider.setValue(8);
 				}
 
 			}
@@ -53,37 +57,45 @@ public class JThresholdDlg extends JDialog {
 		
 		parent = frame;
 		parentImagePanel = parent.getImagePanel();
+		originalImage = parentImagePanel.getImage();
 		
-		setTitle("Threshold (prag)");
-		setBounds(100, 100, 396, 155);
+		
+		
+		setTitle("Pixelate");
+		setBounds(100, 100, 396, 185);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		
 		slider = new JSlider();
+		slider.setMinimum(1);
 		slider.setPaintTicks(true);
-		slider.setMajorTickSpacing(85);
+		slider.setMajorTickSpacing(7);
 		slider.setPaintLabels(true);
 
-		slider.setMaximum(255);
-		slider.setValue(127);
-		slider.setMinorTickSpacing(10);
+		slider.setMaximum(64);
+		slider.setValue(8);
 		
-		slider.setBounds(23, 29, 249, 49);
+		slider.setBounds(23, 11, 333, 49);
 		contentPanel.add(slider);
 		
 		slider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				onSlide();
+				onSlide(e);
 			}
 		});
 		
 		textField = new JTextField();
+		textField.setText("8");
 		textField.setEnabled(false);
-		textField.setBounds(282, 32, 66, 20);
+		textField.setBounds(140, 71, 216, 20);
 		contentPanel.add(textField);
 		textField.setColumns(10);
+		
+		lblPixelSize = new JLabel("Pixel size:");
+		lblPixelSize.setBounds(23, 74, 66, 14);
+		contentPanel.add(lblPixelSize);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -111,12 +123,6 @@ public class JThresholdDlg extends JDialog {
 			}
 		}
 	}
-
-	protected void onSlide() {
-		textField.setText(""+slider.getValue());
-		parentImagePanel.setImage(ImageUtil.threshold(originalImage, slider.getValue()));
-
-	}
 	private void onOK(ActionEvent e){
 		originalImage = null;
 		dispose();
@@ -125,5 +131,15 @@ public class JThresholdDlg extends JDialog {
 		parentImagePanel.setImage(originalImage);
 		originalImage = null;
 		dispose();
-	}	
+	}
+	private void onSlide(ChangeEvent e){
+		int val = slider.getValue();
+		if(((originalImage.getWidth() % val)!=0) || (originalImage.getHeight() % val)!=0){
+			textField.setText(""+val+" : inappropriate pixel size");
+		}
+		else{
+			parentImagePanel.setImage(ImageUtil.pixelate(originalImage, slider.getValue()));
+			textField.setText(""+val);
+		}
+		}
 }
