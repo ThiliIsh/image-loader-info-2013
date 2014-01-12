@@ -13,6 +13,7 @@ import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
+import com.alee.extended.label.WebLinkLabel;
 
 public class JAboutDlg extends JDialog {
 
@@ -20,7 +21,7 @@ public class JAboutDlg extends JDialog {
 	private JLabel lblAplicatieDeProcesare;
 	private JLabel lblInfoAnul;
 	private JLabel lblNewLabel;
-	private JLabel lblVisitHttpscodegooglecompimageloaderinfo;
+	private WebLinkLabel wblnklblVisitHttpscodegooglecompimageloaderinfo;
 
 
 	/**
@@ -29,7 +30,7 @@ public class JAboutDlg extends JDialog {
 	public JAboutDlg() {
 		setModal(true);
 		setTitle("About");
-		setBounds(100, 100, 361, 164);
+		setBounds(100, 100, 465, 203);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -38,23 +39,25 @@ public class JAboutDlg extends JDialog {
 		lblAplicatieDeProcesare = new JLabel("Image processing application");
 		lblAplicatieDeProcesare.setHorizontalAlignment(SwingConstants.CENTER);
 		lblAplicatieDeProcesare.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblAplicatieDeProcesare.setBounds(60, 11, 224, 22);
+		lblAplicatieDeProcesare.setBounds(112, 11, 224, 22);
 		contentPanel.add(lblAplicatieDeProcesare);
 		
 		lblInfoAnul = new JLabel("<html>\r\nCopyright Info III, 2013 <br>\r\nEmail sibiuu@yahoo.com\r\n</html>");
 		lblInfoAnul.setHorizontalAlignment(SwingConstants.CENTER);
-		lblInfoAnul.setBounds(131, 36, 153, 28);
+		lblInfoAnul.setBounds(149, 64, 153, 40);
 		contentPanel.add(lblInfoAnul);
 		
 		lblNewLabel = new JLabel("");
 		lblNewLabel.setIcon(new ImageIcon(JAboutDlg.class.getResource("/ImageLoader/icons24x24/home_green_24.png")));
-		lblNewLabel.setBounds(70, 36, 34, 28);
+		lblNewLabel.setBounds(207, 36, 34, 28);
 		contentPanel.add(lblNewLabel);
 		
-		lblVisitHttpscodegooglecompimageloaderinfo = new JLabel("Visit https://code.google.com/p/image-loader-info-2013 ");
-		lblVisitHttpscodegooglecompimageloaderinfo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblVisitHttpscodegooglecompimageloaderinfo.setBounds(30, 75, 284, 14);
-		contentPanel.add(lblVisitHttpscodegooglecompimageloaderinfo);
+		wblnklblVisitHttpscodegooglecompimageloaderinfo = new WebLinkLabel();
+		wblnklblVisitHttpscodegooglecompimageloaderinfo.setHorizontalAlignment(SwingConstants.CENTER);
+		wblnklblVisitHttpscodegooglecompimageloaderinfo.setLink("https://code.google.com/p/image-loader-info-2013");
+		wblnklblVisitHttpscodegooglecompimageloaderinfo.setText("https://code.google.com/p/image-loader-info-2013");
+		wblnklblVisitHttpscodegooglecompimageloaderinfo.setBounds(56, 104, 337, 14);
+		contentPanel.add(wblnklblVisitHttpscodegooglecompimageloaderinfo);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.CENTER));

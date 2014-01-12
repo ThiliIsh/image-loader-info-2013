@@ -18,6 +18,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JLabel;
 
+
 public class JRGBBalanceDlg extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();

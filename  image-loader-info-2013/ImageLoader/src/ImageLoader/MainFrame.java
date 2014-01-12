@@ -47,6 +47,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JCheckBoxMenuItem;
 
+
 public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 3543083080286749217L;
 
@@ -94,10 +95,14 @@ public class MainFrame extends JFrame {
 	private final JRGBBalanceDlg rgbBalanceDlg;
 	private final JPixelateDlg pixelateDlg;
 	private final JHistogramThresholdDlg histogramThresholdDlg;
+	private final JHistogramDlg histogramDlg;
 	private final JGammaContrastDlg gammaContrastDlg;
 	private final JBitPlaneSlicingDlg bitPlaneSlicingDlg;
 	private final JResizeDlg resizeDlg;
 	private final JRotateDlg rotateDlg;
+	private final JBlendDlg blendDlg;
+	private final JLogicalDlg logicalDlg;
+	
 	
 	
 	private JMenuItem mntmThreshold;
@@ -136,6 +141,9 @@ public class MainFrame extends JFrame {
 	private JMenuItem mntmBitPlaneSlicing;
 	private JMenuItem mntmResize;
 	private JMenuItem mntmRotate;
+	private JMenuItem mntmHistogram;
+	private JMenuItem mntmBlend;
+	private JMenuItem mntmLogicalOperations;
 
 	public static void main(String[] args) {
 		try {
@@ -147,14 +155,14 @@ public class MainFrame extends JFrame {
 	}
 
 	public MainFrame() {
-		this(null);
+		this(new Point(100,10));
 	}
 
 	public MainFrame(Point topLeft) {
 
 		setTitle("Image Loader");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(0, 0, 600, 400);
+		setBounds(0, 0, 700, 500);
 
 		if (topLeft == null)
 			setLocationRelativeTo(null);
@@ -179,8 +187,11 @@ public class MainFrame extends JFrame {
 		bitPlaneSlicingDlg = new JBitPlaneSlicingDlg(this);
 		resizeDlg = new JResizeDlg(this);
 		rotateDlg = new JRotateDlg(this);
+		histogramDlg = new JHistogramDlg(this);
+		blendDlg = new JBlendDlg(this);
+		logicalDlg = new JLogicalDlg(this);
 
-
+		
 		
 		fileChooser.setFileFilter(new FileNameExtensionFilter("Image files",
 				"jpg", "jpeg", "png", "bmp", "gif"));
@@ -514,13 +525,6 @@ public class MainFrame extends JFrame {
 				mnEdit.add(mntmContraststretching);
 		mnEdit.add(mntmRgbBalance);
 		
-		mntmHistogramThreshold = new JMenuItem("Histogram Threshold...");
-		mntmHistogramThreshold.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				histogramThresholdDlg.setVisible(true);
-			}
-		});
-		
 		mntmPosterize = new JMenuItem("Posterize");
 		mntmPosterize.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -562,6 +566,22 @@ public class MainFrame extends JFrame {
 				resizeDlg.setVisible(true);
 			}
 		});
+		
+		mntmHistogram = new JMenuItem("Histogram...");
+		mntmHistogram.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				histogramDlg.setVisible(true);
+			}
+		});
+		mnEdit.add(mntmHistogram);
+		
+		mntmHistogramThreshold = new JMenuItem("Histogram Threshold...");
+		mntmHistogramThreshold.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				histogramThresholdDlg.setVisible(true);
+			}
+		});
+		mnEdit.add(mntmHistogramThreshold);
 		mnEdit.add(mntmResize);
 		
 		mntmRotate = new JMenuItem("Rotate...");
@@ -571,7 +591,22 @@ public class MainFrame extends JFrame {
 			}
 		});
 		mnEdit.add(mntmRotate);
-		mnEdit.add(mntmHistogramThreshold);
+		
+		mntmLogicalOperations = new JMenuItem("Logical Operations...");
+		mntmLogicalOperations.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				logicalDlg.setVisible(true);
+			}
+		});
+		mnEdit.add(mntmLogicalOperations);
+		
+		mntmBlend = new JMenuItem("Blend...");
+		mntmBlend.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				blendDlg.setVisible(true);
+			}
+		});
+		mnEdit.add(mntmBlend);
 
 		mnHelp = new JMenu("Help");
 		mnHelp.setMnemonic('H');
@@ -614,7 +649,8 @@ public class MainFrame extends JFrame {
 				.getResource("/ImageLoader/icons24x24/save_24.png")));
 		toolBar.add(btnSaveas);
 
-		btnLenagray = new JButton("LenaGray");
+		btnLenagray = new JButton("");
+		btnLenagray.setIcon(new ImageIcon(MainFrame.class.getResource("/ImageLoader/icons24x24/lena_gray_24.png")));
 		btnLenagray.setOpaque(false);
 		btnLenagray.setBorderPainted(false);
 		btnLenagray.addActionListener(new ActionListener() {
@@ -649,7 +685,8 @@ public class MainFrame extends JFrame {
 		toolBar.add(btnPaste);
 		toolBar.add(btnLenagray);
 
-		btnLenacolor = new JButton("LenaColor");
+		btnLenacolor = new JButton("");
+		btnLenacolor.setIcon(new ImageIcon(MainFrame.class.getResource("/ImageLoader/icons24x24/lena_color_24.png")));
 		btnLenacolor.setOpaque(false);
 		btnLenacolor.setBorderPainted(false);
 		btnLenacolor.addActionListener(new ActionListener() {
@@ -690,7 +727,9 @@ public class MainFrame extends JFrame {
 			BufferedImage bImage = (BufferedImage) clip.getData(DataFlavor.imageFlavor);
 			
 			// imagePanel.setImage((BufferedImage) IMG.getImage());
+			
 			imagePanel.setImage(bImage);
+			
 		} catch (UnsupportedFlavorException e1) {
 			JOptionPane.showMessageDialog(this, "No Image on Clipboard!");
 			e1.printStackTrace();

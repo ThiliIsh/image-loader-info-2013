@@ -363,13 +363,16 @@ public class JResizeDlg extends JDialog {
 	private void onResize() {
 		double xFactor = 0.0;
 		double yFactor = 0.0;
+	    int sourceWidth = originalImage.getWidth();
+	    int sourceHeight = originalImage.getHeight();	
+	    int destWidth = 0;
+	    int destHeight = 0;
 		//System.out.println(tabbedPane.getSelectedIndex());
 		
 		if (tabbedPane.getSelectedIndex() == 1) {
-			int destWidth = Integer.parseInt(wTextField.getText());
-			int destHeight = Integer.parseInt(hTextField.getText());
-		    int sourceWidth = originalImage.getWidth();
-		    int sourceHeight = originalImage.getHeight();
+			destWidth = Integer.parseInt(wTextField.getText());
+			destHeight = Integer.parseInt(hTextField.getText());
+
 		    xFactor = ((double) destWidth) / (double) sourceWidth;
 		    yFactor = ((double) destHeight) / (double) sourceHeight;		    
 
@@ -392,13 +395,15 @@ public class JResizeDlg extends JDialog {
 				yFactor = 1.0;
 			if (jProportionCheckBox.isSelected())
 				yFactor = xFactor;
+			
+			destWidth = (int) Math.rint(xFactor * sourceWidth);
+			destHeight = (int) Math.rint(yFactor * sourceHeight);
 		} 
 
 		
 
 		BufferedImage dest = null;
-		// dest = new BufferedImage(originalImage.getWidth(),
-		// originalImage.getHeight(), originalImage.getType());
+		 dest = new BufferedImage(destWidth, destHeight, originalImage.getType());
 
 		AffineTransform scale = new AffineTransform();
 		scale.setToScale(xFactor, yFactor);
@@ -409,13 +414,13 @@ public class JResizeDlg extends JDialog {
 		// TYPE_BILINEAR = 2;
 		// TYPE_BICUBIC = 3;
 
-		dest = op.filter(originalImage, null);
-		// op.filter(originalImage, dest);
+		//dest = op.filter(originalImage, null);
+		op.filter(originalImage, dest);
 
 		// TO DO: Image type is wrong after affine transformation!!
 		
-		//parentImagePanel.setImage(dest);
-		parentImagePanel.setImage(ImageUtil.convertImageType(dest, BufferedImage.TYPE_INT_BGR));
+		parentImagePanel.setImage(dest);
+		//parentImagePanel.setImage(ImageUtil.convertImageType(dest, originalImage.getType()));
 
 	}
 

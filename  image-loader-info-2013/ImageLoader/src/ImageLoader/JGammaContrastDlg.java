@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
+
 import com.alee.managers.language.data.Text;
 
 import java.awt.event.ActionListener;
