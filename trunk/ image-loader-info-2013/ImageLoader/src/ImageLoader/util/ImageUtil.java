@@ -1,4 +1,4 @@
-package ImageLoader;
+package ImageLoader.util;
 
 import java.awt.AWTException;
 import java.awt.Component;
@@ -23,6 +23,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
+import ImageLoader.gui.ImagePanel;
 
 
 public class ImageUtil {

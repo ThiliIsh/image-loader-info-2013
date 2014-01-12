@@ -1,4 +1,4 @@
-package ImageLoader;
+package ImageLoader.util;
 
 public class TimeCounter {
 	private long startTime_ms;

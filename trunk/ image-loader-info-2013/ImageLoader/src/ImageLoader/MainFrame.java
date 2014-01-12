@@ -47,6 +47,24 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JCheckBoxMenuItem;
 
+import ImageLoader.gui.ImagePanel;
+import ImageLoader.gui.JAboutDlg;
+import ImageLoader.gui.JBitPlaneSlicingDlg;
+import ImageLoader.gui.JBlendDlg;
+import ImageLoader.gui.JBrightnessDlg;
+import ImageLoader.gui.JContrastDlg;
+import ImageLoader.gui.JGammaContrastDlg;
+import ImageLoader.gui.JHistogramDlg;
+import ImageLoader.gui.JHistogramThresholdDlg;
+import ImageLoader.gui.JLogicalDlg;
+import ImageLoader.gui.JPixelateDlg;
+import ImageLoader.gui.JRGBBalanceDlg;
+import ImageLoader.gui.JResizeDlg;
+import ImageLoader.gui.JRotateDlg;
+import ImageLoader.gui.JThresholdDlg;
+import ImageLoader.util.ImageTransferable;
+import ImageLoader.util.ImageUtil;
+
 
 public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 3543083080286749217L;

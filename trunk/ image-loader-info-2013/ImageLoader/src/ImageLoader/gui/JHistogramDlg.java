@@ -1,4 +1,4 @@
-package ImageLoader;
+package ImageLoader.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -14,6 +14,10 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
+
+import ImageLoader.MainFrame;
+import ImageLoader.util.Histogram;
+import ImageLoader.util.ImageUtil;
 
 import com.alee.managers.language.data.Text;
 

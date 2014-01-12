@@ -2,6 +2,9 @@ package ImageLoader;
 
 import java.awt.image.BufferedImage;
 
+import ImageLoader.util.ImageUtil;
+import ImageLoader.util.TimeCounter;
+
 
 public class MainApp {
 

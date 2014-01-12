@@ -1,4 +1,4 @@
-package ImageLoader;
+package ImageLoader.gui;
 
 import javax.swing.JPanel;
 
@@ -31,6 +31,8 @@ import java.awt.event.WindowEvent;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTabbedPane;
+
+import ImageLoader.MainFrame;
 
 public class JResizeDlg extends JDialog {
 
